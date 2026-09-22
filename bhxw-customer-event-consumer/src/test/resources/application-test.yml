@@ -1,0 +1,11 @@
+spring:
+  kafka:
+    listener:
+      auto-startup: false
+  sql:
+    init:
+      mode: never
+app:
+  kafka:
+    topic: bhxw.tapp.customer.cdc.test.v1
+    consumer-group: customer_event_consumer_test

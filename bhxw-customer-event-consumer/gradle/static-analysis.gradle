@@ -1,0 +1,37 @@
+checkstyle {
+    toolVersion = '10.21.4'
+    configFile = file("$rootDir/config/checkstyle/checkstyle.xml")
+    ignoreFailures = false
+}
+
+pmd {
+    toolVersion = '7.26.0'
+    consoleOutput = true
+    ignoreFailures = false
+    ruleSets = []
+    ruleSetFiles = files("$rootDir/config/pmd/ruleset.xml")
+}
+
+spotless {
+    java {
+        googleJavaFormat('1.25.2')
+        removeUnusedImports()
+        trimTrailingWhitespace()
+        endWithNewline()
+    }
+    groovyGradle {
+        greclipse()
+        trimTrailingWhitespace()
+        endWithNewline()
+    }
+}
+
+spotbugs {
+    ignoreFailures = false
+    effort = 'max'
+    reportLevel = 'medium'
+}
+
+tasks.named('check') {
+    dependsOn 'spotlessCheck'
+}

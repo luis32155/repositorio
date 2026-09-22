@@ -1,0 +1,376 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Customer information full snapshot",
+  "type": "object",
+  "required": [
+    "payload",
+    "metadata"
+  ],
+  "additionalProperties": true,
+  "properties": {
+    "payload": {
+      "type": "object",
+      "additionalProperties": true,
+      "required": [
+        "user_details"
+      ],
+      "properties": {
+        "triggering_user_details": {
+          "type": [
+            "object",
+            "null"
+          ],
+          "additionalProperties": true,
+          "description": "Actor snapshot; preserved without treating it as the target user."
+        },
+        "user_details": {
+          "type": "object",
+          "additionalProperties": true,
+          "required": [
+            "user_id",
+            "enterprise_details",
+            "entitlements"
+          ],
+          "properties": {
+            "user_id": {
+              "type": "string",
+              "minLength": 1
+            },
+            "user_full_name": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "user_middle_name": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "user_country": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "user_preferred_language": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "user_role_name": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "user_status": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "user_email": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "user_email_domain": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "phone_number": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "document_number": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "document_type": {
+              "type": [
+                "integer",
+                "null"
+              ],
+              "minimum": -2147483648,
+              "maximum": 2147483647
+            },
+            "event_timestamp": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "format": "date-time",
+              "description": "Ordering timestamp. Falls back to metadata.event_timestamp when absent/null; confirm this rule with producer."
+            },
+            "enterprise_details": {
+              "type": "object",
+              "additionalProperties": true,
+              "required": [
+                "enterprise_sco_id"
+              ],
+              "properties": {
+                "enterprise_sco_id": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "reference_code": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                },
+                "enterprise_name": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                },
+                "enterprise_country": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                },
+                "enterprise_status": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                },
+                "constitution_date": {
+                  "type": [
+                    "string",
+                    "null"
+                  ],
+                  "format": "date"
+                }
+              }
+            },
+            "entitlements": {
+              "type": "object",
+              "additionalProperties": true,
+              "required": [
+                "services"
+              ],
+              "properties": {
+                "account_transfer": {
+                  "type": [
+                    "object",
+                    "null"
+                  ],
+                  "additionalProperties": true,
+                  "properties": {
+                    "enabled": {
+                      "type": [
+                        "boolean",
+                        "null"
+                      ]
+                    }
+                  }
+                },
+                "recipient_maintenance_enabled": {
+                  "type": [
+                    "boolean",
+                    "null"
+                  ]
+                },
+                "services": {
+                  "type": "array",
+                  "description": "Complete list. Empty removes all services; missing/null is invalid.",
+                  "items": {
+                    "$ref": "#/$defs/service"
+                  }
+                }
+              }
+            },
+            "person_type": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "birth_date": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "format": "date"
+            },
+            "marital_status": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "gender": {
+              "type": [
+                "string",
+                "null"
+              ]
+            }
+          }
+        }
+      }
+    },
+    "metadata": {
+      "type": "object",
+      "additionalProperties": true,
+      "required": [
+        "source_id",
+        "event_id",
+        "event_timestamp"
+      ],
+      "properties": {
+        "source_id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "event_id": {
+          "type": "string",
+          "minLength": 1,
+          "description": "Event name, not a unique delivery ID."
+        },
+        "event_timestamp": {
+          "type": "string",
+          "format": "date-time"
+        }
+      }
+    }
+  },
+  "$defs": {
+    "service": {
+      "type": "object",
+      "additionalProperties": true,
+      "required": [
+        "service_id",
+        "accounts"
+      ],
+      "properties": {
+        "service_id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "service_name": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "service_type": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "user_role": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "service_selected": {
+          "type": [
+            "boolean",
+            "null"
+          ]
+        },
+        "accounts": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/account"
+          }
+        },
+        "service_details": {
+          "type": [
+            "object",
+            "null"
+          ],
+          "additionalProperties": true,
+          "properties": {
+            "transaction_limit": {
+              "type": [
+                "number",
+                "null"
+              ],
+              "minimum": 0
+            },
+            "daily_limit": {
+              "type": [
+                "number",
+                "null"
+              ],
+              "minimum": 0
+            },
+            "limit_currency": {
+              "type": [
+                "string",
+                "null"
+              ]
+            }
+          }
+        }
+      }
+    },
+    "account": {
+      "type": "object",
+      "additionalProperties": true,
+      "required": [
+        "account_number"
+      ],
+      "properties": {
+        "account_number": {
+          "type": "string",
+          "minLength": 1
+        },
+        "account_type": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "account_name": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "account_status": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "currency_code": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "transaction_limit": {
+          "type": [
+            "number",
+            "null"
+          ],
+          "minimum": 0
+        },
+        "daily_limit": {
+          "type": [
+            "number",
+            "null"
+          ],
+          "minimum": 0
+        }
+      }
+    }
+  }
+}

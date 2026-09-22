@@ -1,0 +1,65 @@
+spring:
+  application:
+    name: bhxw-customer-event-consumer
+  threads:
+    virtual:
+      enabled: ${VIRTUAL_THREADS_ENABLED:true}
+  main:
+    keep-alive: true
+  webflux:
+    base-path: /
+  r2dbc:
+    url: ${POSTGRES_R2DBC_URL:r2dbc:postgresql://localhost:5432/customer_event_consumer}
+    username: ${POSTGRES_USER:customer_consumer}
+    password: ${POSTGRES_PASSWORD}
+    pool:
+      enabled: true
+      initial-size: 2
+      max-size: 10
+      max-acquire-time: 10s
+  sql:
+    init:
+      mode: ${DB_INIT_MODE:never}
+  kafka:
+    bootstrap-servers: ${KAFKA_BOOTSTRAP_SERVERS:localhost:9092}
+    consumer:
+      group-id: ${KAFKA_CONSUMER_GROUP:customer_event_consumer_v1}
+      auto-offset-reset: earliest
+      enable-auto-commit: false
+      # One in-flight record per consumer keeps asynchronous side effects ordered.
+      max-poll-records: 1
+      key-deserializer: org.springframework.kafka.support.serializer.ErrorHandlingDeserializer
+      value-deserializer: org.springframework.kafka.support.serializer.ErrorHandlingDeserializer
+      properties:
+        allow.auto.create.topics: false
+        spring.deserializer.key.delegate.class: org.apache.kafka.common.serialization.StringDeserializer
+        spring.deserializer.value.delegate.class: pe.com.scotiabank.tapp.customer.event.consumer.adapters.kafka.CustomerEventDeserializer
+        spring.json.value.default.type: pe.com.scotiabank.tapp.customer.event.consumer.domain.model.CustomerEventEnvelope
+        spring.json.trusted.packages: pe.com.scotiabank.tapp.customer.event.consumer.domain.model
+        spring.json.use.type.headers: false
+    listener:
+      ack-mode: manual
+      async-acks: true
+      missing-topics-fatal: true
+      concurrency: ${KAFKA_CONCURRENCY:1}
+
+app:
+  kafka:
+    consumer-group: ${KAFKA_CONSUMER_GROUP:customer_event_consumer_v1}
+    topic: ${KAFKA_TOPIC_CUSTOMER_EVENTS:bhxw.tapp.customer.cdc.v1}
+
+logging:
+  structured:
+    format:
+      console: ${LOG_FORMAT_CONSOLE:ecs}
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,metrics,prometheus
+  endpoint:
+    health:
+      probes:
+        enabled: true
+      show-details: when_authorized
