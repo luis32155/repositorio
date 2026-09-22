@@ -1,0 +1,106 @@
+{
+  "payload": {
+    "snapshot_mode": "FULL",
+    "customer_identity": {
+      "country_code": "604",
+      "document_type": "01",
+      "document_number": "12345678",
+      "customer_type": "I",
+      "person_name": "STEVE ROGERS",
+      "future_identity_field": "preserved"
+    },
+    "individual_profile": {
+      "country_code": "604",
+      "document_type": "01",
+      "document_number": "12345678",
+      "first_last_name": "ROGERS",
+      "second_last_name": "SMITH",
+      "first_given_name": "STEVE",
+      "second_given_name": "JOSEPH",
+      "birth_date": "1985-07-04",
+      "marital_status": "S",
+      "gender": "M"
+    },
+    "legal_entity_profile": null,
+    "digital_contacts": [
+      {
+        "country_code": "604",
+        "document_type": "01",
+        "document_number": "12345678",
+        "contact_type": "1",
+        "contact_value": "steve@example.com",
+        "validation_status": "1"
+      },
+      {
+        "country_code": "604",
+        "document_type": "01",
+        "document_number": "12345678",
+        "contact_type": "2",
+        "contact_value": "999888777",
+        "validation_status": "0"
+      }
+    ],
+    "account_profiles": [
+      {
+        "company_code": "001",
+        "account_number": "123456789",
+        "account_officer_code": "101",
+        "risk_classification": "1",
+        "internal_classification_code": "1001",
+        "account_name": "OPERATING ACCOUNT",
+        "customer_segment_code": "10",
+        "opened_date": "2020-01-15",
+        "sector_code": "100"
+      },
+      {
+        "company_code": "001",
+        "account_number": "987654321",
+        "account_name": "SAVINGS ACCOUNT",
+        "opened_date": "2021-02-20"
+      },
+      {
+        "company_code": "001",
+        "account_number": "999999999",
+        "account_name": "INTEGRATED ACCOUNT",
+        "opened_date": "2019-01-01"
+      }
+    ],
+    "customer_account_links": [
+      {
+        "company_code": "001",
+        "account_number": "123456789",
+        "country_code": "604",
+        "document_type": "01",
+        "document_number": "12345678"
+      },
+      {
+        "company_code": "001",
+        "account_number": "987654321",
+        "country_code": "604",
+        "document_type": "01",
+        "document_number": "12345678"
+      }
+    ],
+    "account_consolidations": [
+      {
+        "relationship_code": "001",
+        "integrated_company_code": "001",
+        "integrated_account_number": "999999999",
+        "source_company_code": "001",
+        "source_account_number": "123456789"
+      }
+    ],
+    "additional_attributes": {
+      "dynamic_payload": true
+    }
+  },
+  "metadata": {
+    "source_id": "BHXW",
+    "channel": "TAPP",
+    "event_id": "evt-20260922-000001",
+    "event_timestamp": "2026-09-22T10:30:00Z",
+    "source_sequence": "1001",
+    "trace_id": "1245e-12322-asvc-235599",
+    "correlation_id": "1245e-12322-asvc-235599"
+  }
+}

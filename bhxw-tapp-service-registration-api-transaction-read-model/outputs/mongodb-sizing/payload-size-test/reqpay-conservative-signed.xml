@@ -1,0 +1,112 @@
+<upi:ReqPay xmlns:upi="http://npci.org/upi/schema/">
+  <Head ver="2.0" ts="2027-01-15T10:30:45.521-05:00" orgId="000805" msgId="MSG20270115000000000000000000000001" prodType="UPI"/>
+  <Meta>
+    <Tag name="PAYREQSTART" value="2027-01-15T10:30:45.521-05:00"/>
+    <Tag name="PAYREQEND" value="2027-01-15T10:30:46.041-05:00"/>
+  </Meta>
+  <Txn id="TXN20270115000000000000000000000001" note="Transferencia interbancaria CCE de prueba" custRef="CUSTREF000012345678" refId="REF20270115000000000001" refUrl="https://api.example.test/v1/transfers/REF20270115000000000001" ts="2027-01-15T10:30:45.521-05:00" refCategory="00" type="PAY" orgTxnId="ORGTXN2027011500000000000000000001" purpose="00" orgRrn="000123456789" orgTxnDate="2027-01-15T10:30:45.521-05:00" initiationMode="00" subType="PAY" orgRespCode="00" clVersion="2.0">
+    <RiskScores>
+      <Score provider="TAPP" type="TXNRISK" value="00000000000000000000000000000032"/>
+      <Score provider="BANK" type="FRAUDRISK" value="00000000000000000000000000000040"/>
+      <Score provider="CCE" type="NETWORKRISK" value="00000000000000000000000000000010"/>
+    </RiskScores>
+    <Rules>
+      <Rule name="EXPIREAFTER" value="64800"/>
+      <Rule name="MINAMOUNT" value="0.01"/>
+    </Rules>
+    <QR qVer="000001" ts="2027-01-15T10:30:45.521-05:00" qrMedium="DYNAMIC" expireTs="2027-01-16T10:30:45.521-05:00" query="TRANSFERENCIA CCE COMERCIO DEMO" verToken="TOKEN-DEMO-20270115-0000000001" stan="123456"/>
+  </Txn>
+  <Payer addr="ana.maria.perez.garcia@banco-origen.test" name="ANA MARIA PEREZ GARCIA" seqNum="000001" type="PERSON" code="0000" cmId="CM-ORIGEN-0000001">
+    <Merchant>
+      <Identifier subCode="7407" mid="MID-ORIGEN-000001" sid="SID-ORIGEN-000001" tid="TID-ORIGEN-000001" merchantType="SMALL" merchantGenre="ONLINE" onBoardingType="BANK" pinCode="15001" regIdNo="REG-ORIGEN-000001" tier="TIER1"/>
+      <Name brand="TAPP DEMO" legal="TAPP DEMO SOCIEDAD ANONIMA" franchise="TAPP"/>
+      <Ownership type="PROPRIETARY"/>
+      <Invoice name="FACTURA ELECTRONICA" num="F001-00001234" date="2027-01-15T10:30:45.521-05:00"/>
+    </Merchant>
+    <Institution type="BANK" route="CCE">
+      <Name value="BANCO DE ORIGEN DEMO" acNum="00112233445566778899"/>
+      <Purpose code="P01" note="TRANSFERENCIA INTERBANCARIA"/>
+      <Originator name="ANA MARIA PEREZ GARCIA" type="INDIVIDUAL" refNo="ORI20270115000001">
+        <Address location="AVENIDA DEMO 123" city="LIMA" country="PE" geocode="-12.0464,-77.0428"/>
+      </Originator>
+      <Beneficiary name="COMERCIO DEMO SOCIEDAD ANONIMA CERRADA"/>
+    </Institution>
+    <Info>
+      <Identity id="DOC00012345" type="DNI" verifiedName="ANA MARIA PEREZ GARCIA"/>
+      <Rating VerifiedAddress="TRUE"/>
+    </Info>
+    <Device>
+      <Tag name="MOBILE" value="51987654321"/>
+      <Tag name="GEOCODE" value="-12.0464,-77.0428"/>
+      <Tag name="LOCATION" value="LIMA"/>
+      <Tag name="IP" value="192.0.2.10"/>
+      <Tag name="TYPE" value="ANDROID"/>
+      <Tag name="ID" value="DEVICE-DEMO-2027-00000001"/>
+      <Tag name="OS" value="ANDROID14"/>
+      <Tag name="APP" value="TAPP-MOBILE-2.0.0"/>
+      <Tag name="CAPABILITY" value="UPI_FULL"/>
+    </Device>
+    <Ac addrType="ACCOUNT">
+      <Detail name="IFSC" value="000805"/>
+      <Detail name="ACTYPE" value="SAVINGS"/>
+      <Detail name="ACNUM" value="00112233445566778899"/>
+    </Ac>
+    <Creds>
+      <Cred type="PIN" subType="MPIN">
+        <Data code="NPCI" ki="01">q5fmuRNF2osOl785TNFAVdMaUw2THOAZyg2ss9fy5MoO3z86WDwdS1iQmhfiPBn2sVooqp35q4QFdUej2QSvUTximKmXvyx1UhZ0G7aPt5GGKStaEaV8EMHVGrC0u9atFqFmxXJzwVQYWCCdqCVplRDhpDnyeg0hJbFu8dMNeR7ut3cvDwvdvMY4F1n2RMXu7gTp0dduUk7vKndblZ3SKMkrWWLAfUP9jWDIVPZfy0ZgHTTX3xooX2NrRojvjP9e36I6j2OkCENP8B0vRgozkX36XdjxkoSBoQcltzZojKKY4VfMitCHwgpxIn86SqaSEEI8eHZqlDw</Data>
+      </Cred>
+      <Cred type="PREAPPROVED" subType="NA">
+        <Data>UFJFQVBQUk9WRUQtREVNTy1UT0tFTi0yMDI3MDExNS0wMDAwMDAwMDAwMDAwMDAx</Data>
+      </Cred>
+    </Creds>
+    <Amount value="999999999.99" curr="PEN">
+      <Split name="CONPCT" value="PURCHASE"/>
+    </Amount>
+  </Payer>
+  <Payees>
+    <Payee addr="comercio.demo@banco-destino.test" name="COMERCIO DEMO SOCIEDAD ANONIMA CERRADA" seqNum="001" type="ENTITY" code="0001" cmId="CM-DESTINO-0000001">
+      <Merchant>
+        <Identifier subCode="7407" mid="MID-DESTINO-000001" sid="SID-DESTINO-000001" tid="TID-DESTINO-000001" merchantType="SMALL" merchantGenre="ONLINE" onBoardingType="BANK" pinCode="15001" regIdNo="RUC20123456789" tier="TIER1" merchantLoc="LIMA" merchantInstId="INST-DESTINO-000001"/>
+        <Name brand="COMERCIO DEMO" legal="COMERCIO DEMO SOCIEDAD ANONIMA CERRADA" franchise="COMERCIO DEMO"/>
+        <Ownership type="PARTNERSHIP"/>
+        <Invoice name="FACTURA ELECTRONICA" num="F001-00001234" date="2027-01-15T10:30:45.521-05:00"/>
+      </Merchant>
+      <Info>
+        <Identity id="RUC20123456789" type="RUC" verifiedName="COMERCIO DEMO SOCIEDAD ANONIMA CERRADA"/>
+        <Rating VerifiedAddress="TRUE"/>
+      </Info>
+      <Device>
+        <Tag name="MOBILE" value="51912345678"/>
+        <Tag name="APP" value="CCE-RECEIVER-1.0"/>
+      </Device>
+      <Ac addrType="ACCOUNT">
+        <Detail name="IFSC" value="000123"/>
+        <Detail name="ACTYPE" value="CURRENT"/>
+        <Detail name="ACNUM" value="00998877665544332211"/>
+      </Ac>
+      <Amount value="999999999.99" curr="PEN">
+        <Split name="CONPCT" value="PURCHASE"/>
+      </Amount>
+    </Payee>
+  </Payees>
+  <ds:Signature xmlns:ds="http://www.w3.org/2000/09/xmldsig#">
+    <ds:SignedInfo>
+      <ds:CanonicalizationMethod Algorithm="http://www.w3.org/2001/10/xml-exc-c14n#"/>
+      <ds:SignatureMethod Algorithm="http://www.w3.org/2001/04/xmldsig-more#rsa-sha256"/>
+      <ds:Reference URI="">
+        <ds:Transforms>
+          <ds:Transform Algorithm="http://www.w3.org/2000/09/xmldsig#enveloped-signature"/>
+          <ds:Transform Algorithm="http://www.w3.org/2001/10/xml-exc-c14n#"/>
+        </ds:Transforms>
+        <ds:DigestMethod Algorithm="http://www.w3.org/2001/04/xmlenc#sha256"/>
+        <ds:DigestValue>RERERERERERERERERERERERERERERERERERERERERERE</ds:DigestValue>
+      </ds:Reference>
+    </ds:SignedInfo>
+    <ds:SignatureValue>SSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSS</ds:SignatureValue>
+    <ds:KeyInfo>
+      <ds:X509Data>
+        <ds:X509Certificate>CCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCC</ds:X509Certificate>
+      </ds:X509Data>
+    </ds:KeyInfo>
+  </ds:Signature>
+</upi:ReqPay>

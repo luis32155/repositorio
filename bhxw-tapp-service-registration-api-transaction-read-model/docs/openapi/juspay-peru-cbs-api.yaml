@@ -1,0 +1,803 @@
+openapi: 3.1.0
+info:
+  title: Juspay Peru CBS API
+  version: 1.0.0-draft
+  description: >-
+    Contrato canónico de integración entre Niubiz/Juspay y el CBS, derivado de
+    "Juspay-Peru CBS API Specs". El documento fuente define cuerpos y semántica,
+    pero no URLs, métodos HTTP, seguridad ni catálogos generales de estado; esos
+    elementos se declaran aquí como propuesta de implementación.
+  license:
+    name: Proprietary
+    identifier: LicenseRef-Proprietary
+x-contract-scope: NIUBIZ_JUSPAY_CBS
+x-source-document: Juspay-Peru CBS API Specs.pdf
+x-localization-status: PERU_REVIEW_REQUIRED
+servers:
+  - url: https://api-dev.example.bank
+    description: URL referencial; debe sustituirse por el virtual host de Apigee.
+security:
+  - apiKeyAuth: []
+    mutualTLS: []
+tags:
+  - name: Account Provider
+    description: Descubrimiento de cuentas, validación de tarjeta y consulta de saldo.
+  - name: Money Movement
+    description: Operaciones CBS de crédito y débito.
+  - name: Transaction Status
+    description: Consulta del estado CBS de una transacción previa.
+paths:
+  /v1/cbs/accounts/list:
+    post:
+      tags: [Account Provider]
+      operationId: listAccounts
+      summary: List Accounts
+      description: Obtiene las cuentas asociadas al número móvil y elegibles para el flujo.
+      x-architecture-mapping: [WJ24, JN24]
+      parameters:
+        - $ref: '#/components/parameters/CorrelationId'
+        - $ref: '#/components/parameters/ChannelId'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ListAccountsRequest'
+            examples:
+              peru_mobile:
+                value:
+                  mobileNumber: '+51987654321'
+      responses:
+        '200':
+          description: Resultado CBS del descubrimiento de cuentas
+          headers:
+            X-Correlation-Id:
+              $ref: '#/components/headers/CorrelationId'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ListAccountsResponse'
+        '400': { $ref: '#/components/responses/BadRequest' }
+        '401': { $ref: '#/components/responses/Unauthorized' }
+        '403': { $ref: '#/components/responses/Forbidden' }
+        '429': { $ref: '#/components/responses/TooManyRequests' }
+        '500': { $ref: '#/components/responses/InternalError' }
+        '503': { $ref: '#/components/responses/ServiceUnavailable' }
+  /v1/cbs/cards/validate:
+    post:
+      tags: [Account Provider]
+      operationId: validateCardDetails
+      summary: Validate Card Details
+      description: >-
+        Verifica los últimos seis dígitos, la cuenta asociada y la expiración. No
+        realiza movimientos financieros.
+      x-architecture-mapping: [TP08]
+      parameters:
+        - $ref: '#/components/parameters/CorrelationId'
+        - $ref: '#/components/parameters/ChannelId'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ValidateCardRequest'
+            examples:
+              card_validation:
+                value:
+                  cardNumber: '123456'
+                  accountIdentifier: '1912345678901234'
+                  expiry: '1228'
+      responses:
+        '200':
+          description: Resultado CBS de la validación
+          headers:
+            X-Correlation-Id:
+              $ref: '#/components/headers/CorrelationId'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ValidateCardResponse'
+        '400': { $ref: '#/components/responses/BadRequest' }
+        '401': { $ref: '#/components/responses/Unauthorized' }
+        '403': { $ref: '#/components/responses/Forbidden' }
+        '429': { $ref: '#/components/responses/TooManyRequests' }
+        '500': { $ref: '#/components/responses/InternalError' }
+        '503': { $ref: '#/components/responses/ServiceUnavailable' }
+  /v1/cbs/accounts/balance:
+    post:
+      tags: [Account Provider]
+      operationId: getAccountBalance
+      summary: Balance Enquiry
+      description: Obtiene el saldo disponible autoritativo desde CBS.
+      x-architecture-mapping: [WJ12]
+      parameters:
+        - $ref: '#/components/parameters/CorrelationId'
+        - $ref: '#/components/parameters/ChannelId'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/BalanceEnquiryRequest'
+      responses:
+        '200':
+          description: Resultado CBS de la consulta de saldo
+          headers:
+            X-Correlation-Id:
+              $ref: '#/components/headers/CorrelationId'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BalanceEnquiryResponse'
+        '400': { $ref: '#/components/responses/BadRequest' }
+        '401': { $ref: '#/components/responses/Unauthorized' }
+        '403': { $ref: '#/components/responses/Forbidden' }
+        '429': { $ref: '#/components/responses/TooManyRequests' }
+        '500': { $ref: '#/components/responses/InternalError' }
+        '503': { $ref: '#/components/responses/ServiceUnavailable' }
+  /v1/cbs/transactions/credit:
+    post:
+      tags: [Money Movement]
+      operationId: creditMoney
+      summary: Credit Money
+      description: >-
+        Acredita fondos, revierte un débito o procesa un reembolso según `type`.
+        `gatewayTransactionId` es la clave de idempotencia CBS indicada por Juspay.
+      x-architecture-mapping: [TP03, TP04]
+      parameters:
+        - $ref: '#/components/parameters/CorrelationId'
+        - $ref: '#/components/parameters/ChannelId'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreditMoneyRequest'
+      responses:
+        '200':
+          description: Resultado CBS del crédito, reversa o reembolso
+          headers:
+            X-Correlation-Id:
+              $ref: '#/components/headers/CorrelationId'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CreditMoneyResponse'
+        '400': { $ref: '#/components/responses/BadRequest' }
+        '401': { $ref: '#/components/responses/Unauthorized' }
+        '403': { $ref: '#/components/responses/Forbidden' }
+        '429': { $ref: '#/components/responses/TooManyRequests' }
+        '500': { $ref: '#/components/responses/InternalError' }
+        '503': { $ref: '#/components/responses/ServiceUnavailable' }
+  /v1/cbs/transactions/debit:
+    post:
+      tags: [Money Movement]
+      operationId: debitMoney
+      summary: Debit Money
+      description: >-
+        Debita fondos para una transacción normal o un mandato. El campo
+        `gatewayTransactionId` es la clave de idempotencia CBS indicada por Juspay.
+      x-architecture-mapping: [TP02]
+      parameters:
+        - $ref: '#/components/parameters/CorrelationId'
+        - $ref: '#/components/parameters/ChannelId'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/DebitMoneyRequest'
+      responses:
+        '200':
+          description: Resultado CBS del débito
+          headers:
+            X-Correlation-Id:
+              $ref: '#/components/headers/CorrelationId'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DebitMoneyResponse'
+        '400': { $ref: '#/components/responses/BadRequest' }
+        '401': { $ref: '#/components/responses/Unauthorized' }
+        '403': { $ref: '#/components/responses/Forbidden' }
+        '429': { $ref: '#/components/responses/TooManyRequests' }
+        '500': { $ref: '#/components/responses/InternalError' }
+        '503': { $ref: '#/components/responses/ServiceUnavailable' }
+  /v1/cbs/transactions/status:
+    post:
+      tags: [Transaction Status]
+      operationId: checkTransactionStatus
+      summary: Status Check
+      description: Consulta el estado CBS de un débito, crédito o reversa de débito.
+      parameters:
+        - $ref: '#/components/parameters/CorrelationId'
+        - $ref: '#/components/parameters/ChannelId'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/StatusCheckRequest'
+      responses:
+        '200':
+          description: Resultado CBS de la consulta de estado
+          headers:
+            X-Correlation-Id:
+              $ref: '#/components/headers/CorrelationId'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/StatusCheckResponse'
+        '400': { $ref: '#/components/responses/BadRequest' }
+        '401': { $ref: '#/components/responses/Unauthorized' }
+        '403': { $ref: '#/components/responses/Forbidden' }
+        '429': { $ref: '#/components/responses/TooManyRequests' }
+        '500': { $ref: '#/components/responses/InternalError' }
+        '503': { $ref: '#/components/responses/ServiceUnavailable' }
+components:
+  securitySchemes:
+    apiKeyAuth:
+      type: apiKey
+      in: header
+      name: X-API-Key
+      description: API key entregada al Issuer Switch y validada por Apigee.
+    mutualTLS:
+      type: mutualTLS
+      description: Certificado cliente validado en las capas Akamai/Apigee.
+  parameters:
+    CorrelationId:
+      name: X-Correlation-Id
+      in: header
+      required: true
+      description: Convención de trazabilidad de la arquitectura; no está definida en el PDF.
+      schema:
+        type: string
+        format: uuid
+    ChannelId:
+      name: X-Channel-Id
+      in: header
+      required: true
+      description: Identificador del consumidor externo.
+      schema:
+        type: string
+        const: NIUBIZ_JUSPAY
+  headers:
+    CorrelationId:
+      description: Identificador de trazabilidad recibido en la solicitud.
+      schema:
+        type: string
+        format: uuid
+  schemas:
+    ListAccountsRequest:
+      type: object
+      additionalProperties: false
+      required: [mobileNumber]
+      properties:
+        mobileNumber:
+          type: string
+          minLength: 8
+          maxLength: 20
+          description: Número móvil registrado en CBS usado para descubrir cuentas.
+    ListAccountsResponse:
+      type: object
+      additionalProperties: false
+      required: [status, responseCode, responseMessage]
+      properties:
+        status:
+          $ref: '#/components/schemas/ProcessingStatus'
+        responseCode:
+          $ref: '#/components/schemas/ResponseCode'
+        responseMessage:
+          $ref: '#/components/schemas/ResponseMessage'
+        payload:
+          $ref: '#/components/schemas/ListAccountResponsePayload'
+    ListAccountResponsePayload:
+      type: object
+      additionalProperties: false
+      required: [cbsStatus, cbsResponseCode]
+      properties:
+        lk:
+          type: string
+          description: License Key AUA; específico de Aadhaar y candidato a omitirse en Perú.
+          x-peru-action: OMIT_OR_CONFIRM
+        ac:
+          type: string
+          description: Código AUA; específico de Aadhaar y candidato a omitirse en Perú.
+          x-peru-action: OMIT_OR_CONFIRM
+        sa:
+          type: string
+          description: Código Sub-AUA; específico de Aadhaar y candidato a omitirse en Perú.
+          x-peru-action: OMIT_OR_CONFIRM
+        cbsStatus:
+          $ref: '#/components/schemas/CbsStatus'
+        cbsResponseCode:
+          $ref: '#/components/schemas/ResponseCode'
+        cbsResponseMessage:
+          $ref: '#/components/schemas/ResponseMessage'
+        cbsAccounts:
+          type: array
+          maxItems: 100
+          items:
+            $ref: '#/components/schemas/CbsAccount'
+    CbsAccount:
+      type: object
+      additionalProperties: false
+      required: [accountType, accountNumber, aadhaarEnabled, name, ifsc, status]
+      properties:
+        accountType:
+          type: string
+          description: Tipo de cuenta mantenido en CBS.
+        accountNumber:
+          type: string
+          description: Número de cuenta fuente de verdad para postings CBS.
+        aadhaarEnabled:
+          type: string
+          description: Flag textual de vinculación Aadhaar; debe localizarse para Perú.
+          x-peru-action: REPLACE_OR_OMIT
+        aadhaarNumber:
+          type: string
+          description: Identificador Aadhaar opcional; debe sustituirse por DNI u omitirse.
+          x-peru-action: REPLACE_WITH_LOCAL_ID_OR_OMIT
+        name:
+          type: string
+          description: Nombre del titular registrado en CBS.
+        ifsc:
+          type: string
+          description: Código IFSC; requiere equivalencia de ruteo bancario para Perú.
+          x-peru-action: REPLACE_WITH_LOCAL_ROUTING_CODE
+        status:
+          type: string
+          enum: [ACTIVE, INACTIVE]
+        mmid:
+          type: string
+          description: Mobile Money Identifier opcional.
+          x-peru-action: OMIT_OR_CONFIRM
+    ValidateCardRequest:
+      type: object
+      additionalProperties: false
+      required: [cardNumber, accountIdentifier, expiry]
+      properties:
+        cardNumber:
+          type: string
+          pattern: '^[0-9]{6}$'
+          description: Últimos seis dígitos de la tarjeta de débito.
+        accountIdentifier:
+          type: string
+          minLength: 1
+          maxLength: 64
+          description: Número de cuenta CBS asociado a la tarjeta.
+        expiry:
+          type: string
+          pattern: '^(0[1-9]|1[0-2])[0-9]{2}$'
+          description: Fecha de expiración en formato MMYY.
+    ValidateCardResponse:
+      type: object
+      additionalProperties: false
+      required: [status, responseCode, responseMessage]
+      properties:
+        status:
+          $ref: '#/components/schemas/ProcessingStatus'
+        responseCode:
+          $ref: '#/components/schemas/ResponseCode'
+        responseMessage:
+          $ref: '#/components/schemas/ResponseMessage'
+        payload:
+          $ref: '#/components/schemas/ValidateResponsePayload'
+    ValidateResponsePayload:
+      type: object
+      additionalProperties: false
+      required: [cbsStatus, cbsResponseCode]
+      properties:
+        cbsStatus:
+          $ref: '#/components/schemas/CbsStatus'
+        cbsResponseCode:
+          $ref: '#/components/schemas/ResponseCode'
+        cbsResponseMessage:
+          $ref: '#/components/schemas/ResponseMessage'
+    BalanceEnquiryRequest:
+      type: object
+      additionalProperties: false
+      required: [accountIdentifier, ifsc]
+      properties:
+        accountIdentifier:
+          type: string
+          minLength: 1
+          maxLength: 64
+          description: Cuenta CBS cuya disponibilidad se consulta.
+        ifsc:
+          type: string
+          description: Código IFSC documentado por Juspay; requiere localización para Perú.
+          x-peru-action: REPLACE_WITH_LOCAL_ROUTING_CODE
+    BalanceEnquiryResponse:
+      type: object
+      additionalProperties: false
+      required: [status, responseCode, responseMessage]
+      properties:
+        status:
+          $ref: '#/components/schemas/ProcessingStatus'
+        responseCode:
+          $ref: '#/components/schemas/ResponseCode'
+        responseMessage:
+          $ref: '#/components/schemas/ResponseMessage'
+        payload:
+          $ref: '#/components/schemas/GetAccountBalanceResponsePayload'
+    GetAccountBalanceResponsePayload:
+      type: object
+      additionalProperties: false
+      required: [availableBalance, cbsStatus, cbsResponseCode]
+      properties:
+        availableBalance:
+          $ref: '#/components/schemas/Amount'
+        cbsStatus:
+          $ref: '#/components/schemas/CbsStatus'
+        cbsResponseCode:
+          $ref: '#/components/schemas/ResponseCode'
+        cbsResponseMessage:
+          $ref: '#/components/schemas/ResponseMessage'
+    CreditMoneyRequest:
+      type: object
+      additionalProperties: false
+      required:
+        - amount
+        - gatewayReferenceId
+        - gatewayTransactionId
+        - payeeAccountNumber
+        - payeeName
+        - type
+      properties:
+        amount:
+          $ref: '#/components/schemas/Amount'
+        gatewayReferenceId:
+          $ref: '#/components/schemas/GatewayReferenceId'
+        gatewayTransactionId:
+          $ref: '#/components/schemas/GatewayTransactionId'
+        orgGatewayReferenceId:
+          $ref: '#/components/schemas/GatewayReferenceId'
+        orgGatewayTransactionId:
+          $ref: '#/components/schemas/GatewayTransactionId'
+        isDirectCredit:
+          type: string
+          description: Flag booleano recibido como texto según el documento fuente.
+        payeeAccountNumber:
+          type: string
+        payerAccountNumber:
+          type: string
+        payeeVpa:
+          type: string
+        payerVpa:
+          type: string
+        payerAcType:
+          type: string
+        payeeAcType:
+          type: string
+        payerIfsc:
+          type: string
+          x-peru-action: REPLACE_WITH_LOCAL_ROUTING_CODE
+        payeeIfsc:
+          type: string
+          x-peru-action: REPLACE_WITH_LOCAL_ROUTING_CODE
+        payerMcc:
+          type: string
+        payeeMcc:
+          type: string
+        payerName:
+          type: string
+        payeeName:
+          type: string
+        remarks:
+          type: string
+        type:
+          type: string
+          enum: [TRANSACTION, DEBIT_REVERSAL, REFUND]
+        transactionTimestamp:
+          type: string
+          description: Timestamp NPCI en IST según el documento; zona horaria pendiente para Perú.
+          x-peru-action: CONFIRM_TIMEZONE_AND_FORMAT
+        udfParameters:
+          type: string
+          description: Parámetros de rechazo o excepción, por ejemplo DECLINED-Credit_txn_limit_exceeded.
+      allOf:
+        - if:
+            required: [type]
+            properties:
+              type:
+                const: REFUND
+          then:
+            required: [orgGatewayTransactionId]
+            properties:
+              orgGatewayTransactionId:
+                $ref: '#/components/schemas/GatewayTransactionId'
+    CreditMoneyResponse:
+      type: object
+      additionalProperties: false
+      required: [status, responseCode, responseMessage]
+      properties:
+        status:
+          $ref: '#/components/schemas/ProcessingStatus'
+        responseCode:
+          $ref: '#/components/schemas/ResponseCode'
+        responseMessage:
+          $ref: '#/components/schemas/ResponseMessage'
+        payload:
+          $ref: '#/components/schemas/CreditResponsePayload'
+        udfParameters:
+          type: string
+    CreditResponsePayload:
+      type: object
+      additionalProperties: false
+      required: [cbsStatus, cbsResponseCode, payeeAccountNumber]
+      properties:
+        cbsStatus:
+          $ref: '#/components/schemas/CbsStatus'
+        cbsResponseCode:
+          $ref: '#/components/schemas/ResponseCode'
+        cbsResponseMessage:
+          $ref: '#/components/schemas/ResponseMessage'
+        amount:
+          $ref: '#/components/schemas/Amount'
+        gatewayTransactionId:
+          $ref: '#/components/schemas/GatewayTransactionId'
+        gatewayReferenceId:
+          $ref: '#/components/schemas/GatewayReferenceId'
+        payeeAccountNumber:
+          type: string
+        cbsReferenceId:
+          type: string
+        updatedAt:
+          type: string
+        remarks:
+          type: string
+    DebitMoneyRequest:
+      type: object
+      additionalProperties: false
+      required:
+        - amount
+        - gatewayReferenceId
+        - gatewayTransactionId
+        - payerAccountNumber
+        - type
+      properties:
+        amount:
+          $ref: '#/components/schemas/Amount'
+        gatewayReferenceId:
+          $ref: '#/components/schemas/GatewayReferenceId'
+        gatewayTransactionId:
+          $ref: '#/components/schemas/GatewayTransactionId'
+        orgMandateId:
+          type: string
+        orgGatewayTransactionId:
+          $ref: '#/components/schemas/GatewayTransactionId'
+        payeeAccountNumber:
+          type: string
+        payerAccountNumber:
+          type: string
+        payeeAcType:
+          type: string
+        payeeIfsc:
+          type: string
+          x-peru-action: REPLACE_WITH_LOCAL_ROUTING_CODE
+        payeeMcc:
+          type: string
+        payeeName:
+          type: string
+        payeeVpa:
+          type: string
+        payerAcType:
+          type: string
+        payerIfsc:
+          type: string
+          x-peru-action: REPLACE_WITH_LOCAL_ROUTING_CODE
+        payerMcc:
+          type: string
+        payerName:
+          type: string
+        payerVpa:
+          type: string
+        remarks:
+          type: string
+        type:
+          type: string
+          enum: [TRANSACTION, MANDATE]
+        umn:
+          type: string
+          description: Unique Mandate Number, usado cuando `type` es MANDATE.
+        transactionTimestamp:
+          type: string
+          description: Timestamp NPCI en IST; obligatorio para mandato según la especificación.
+          x-peru-action: CONFIRM_TIMEZONE_AND_FORMAT
+        udfParameters:
+          type: string
+          description: Parámetros de rechazo o excepción, por ejemplo DECLINED-Debit-txn-limit-exceeded.
+      allOf:
+        - if:
+            required: [type]
+            properties:
+              type:
+                const: MANDATE
+          then:
+            required: [umn, transactionTimestamp]
+            properties:
+              umn:
+                type: string
+              transactionTimestamp:
+                type: string
+    DebitMoneyResponse:
+      type: object
+      additionalProperties: false
+      required: [status, responseCode, responseMessage]
+      properties:
+        status:
+          $ref: '#/components/schemas/ProcessingStatus'
+        responseCode:
+          $ref: '#/components/schemas/ResponseCode'
+        responseMessage:
+          $ref: '#/components/schemas/ResponseMessage'
+        payload:
+          $ref: '#/components/schemas/DebitResponsePayload'
+        udfParameters:
+          type: string
+    DebitResponsePayload:
+      type: object
+      additionalProperties: false
+      required: [cbsStatus, cbsResponseCode]
+      properties:
+        cbsStatus:
+          $ref: '#/components/schemas/CbsStatus'
+        cbsResponseCode:
+          $ref: '#/components/schemas/ResponseCode'
+        cbsResponseMessage:
+          $ref: '#/components/schemas/ResponseMessage'
+        amount:
+          $ref: '#/components/schemas/Amount'
+        gatewayTransactionId:
+          $ref: '#/components/schemas/GatewayTransactionId'
+        gatewayReferenceId:
+          $ref: '#/components/schemas/GatewayReferenceId'
+        accountIdentifier:
+          type: string
+        cbsReferenceId:
+          type: string
+        updatedAt:
+          type: string
+        remarks:
+          type: string
+    StatusCheckRequest:
+      type: object
+      additionalProperties: false
+      required: [gatewayTransactionId, type, gatewayReferenceId]
+      properties:
+        gatewayTransactionId:
+          $ref: '#/components/schemas/GatewayTransactionId'
+        type:
+          type: string
+          enum: [DEBIT_TRANSACTION, CREDIT_TRANSACTION, DEBIT_REVERSAL]
+        gatewayReferenceId:
+          $ref: '#/components/schemas/GatewayReferenceId'
+    StatusCheckResponse:
+      type: object
+      additionalProperties: false
+      required: [status, responseCode, responseMessage]
+      properties:
+        status:
+          $ref: '#/components/schemas/ProcessingStatus'
+        responseCode:
+          $ref: '#/components/schemas/ResponseCode'
+        responseMessage:
+          $ref: '#/components/schemas/ResponseMessage'
+        payload:
+          $ref: '#/components/schemas/CheckTransactionStatusResponsePayload'
+    CheckTransactionStatusResponsePayload:
+      type: object
+      additionalProperties: false
+      required: [cbsStatus, cbsResponseCode]
+      properties:
+        cbsStatus:
+          type: string
+          enum: [SUCCESS, FAILURE, NOTFOUND]
+        cbsReferenceId:
+          type: string
+        cbsResponseCode:
+          $ref: '#/components/schemas/ResponseCode'
+        cbsResponseMessage:
+          $ref: '#/components/schemas/ResponseMessage'
+        updatedAt:
+          type: string
+    Amount:
+      type: string
+      pattern: '^[0-9]{1,16}(\.[0-9]{1,4})?$'
+      description: >-
+        Importe positivo como texto. El documento presupone INR; para Perú debe
+        confirmarse PEN y si la moneda se deriva del contexto o requiere otro campo.
+      x-peru-action: CONFIRM_PEN_AND_CURRENCY_HANDLING
+      examples: ['100.00']
+    GatewayTransactionId:
+      type: string
+      minLength: 1
+      maxLength: 100
+      description: ID de transacción del gateway/NPCI; clave primaria de idempotencia CBS.
+    GatewayReferenceId:
+      type: string
+      minLength: 1
+      maxLength: 100
+      description: Customer reference number (RRN) del gateway.
+    ProcessingStatus:
+      type: string
+      minLength: 1
+      maxLength: 50
+      description: Estado general de procesamiento; catálogo no definido en el PDF.
+    CbsStatus:
+      type: string
+      minLength: 1
+      maxLength: 50
+      description: Estado de ejecución CBS; catálogo general no definido en el PDF.
+    ResponseCode:
+      type: string
+      minLength: 1
+      maxLength: 50
+    ResponseMessage:
+      type: string
+      minLength: 1
+      maxLength: 500
+    Problem:
+      type: object
+      additionalProperties: false
+      required: [type, title, status, code, correlationId]
+      properties:
+        type:
+          type: string
+          format: uri
+        title:
+          type: string
+        status:
+          type: integer
+          minimum: 400
+          maximum: 599
+        code:
+          type: string
+        detail:
+          type: string
+        correlationId:
+          type: string
+          format: uuid
+  responses:
+    BadRequest:
+      description: Solicitud HTTP o cuerpo inválido
+      content:
+        application/problem+json:
+          schema:
+            $ref: '#/components/schemas/Problem'
+    Unauthorized:
+      description: API key o certificado ausente/inválido
+      content:
+        application/problem+json:
+          schema:
+            $ref: '#/components/schemas/Problem'
+    Forbidden:
+      description: Canal no autorizado
+      content:
+        application/problem+json:
+          schema:
+            $ref: '#/components/schemas/Problem'
+    TooManyRequests:
+      description: Límite de solicitudes excedido
+      headers:
+        Retry-After:
+          schema:
+            type: integer
+            minimum: 1
+      content:
+        application/problem+json:
+          schema:
+            $ref: '#/components/schemas/Problem'
+    InternalError:
+      description: Error interno no esperado
+      content:
+        application/problem+json:
+          schema:
+            $ref: '#/components/schemas/Problem'
+    ServiceUnavailable:
+      description: CBS o una dependencia temporalmente no disponible
+      content:
+        application/problem+json:
+          schema:
+            $ref: '#/components/schemas/Problem'

@@ -1,0 +1,247 @@
+{
+  "name": "TABLAS CORE",
+  "rows": [
+    {
+      "row": 2,
+      "cells": [
+        {
+          "cell": "D2",
+          "value": "FSD001    : Personas"
+        },
+        {
+          "cell": "E2",
+          "value": "En la ultima columna de la FSD001 se agregara cuenta bt - numeric 9"
+        }
+      ]
+    },
+    {
+      "row": 3,
+      "cells": [
+        {
+          "cell": "D3",
+          "value": "FSD002    : Persona Fisica"
+        }
+      ]
+    },
+    {
+      "row": 4,
+      "cells": [
+        {
+          "cell": "D4",
+          "value": "FSD003    : Persona Juridica"
+        }
+      ]
+    },
+    {
+      "row": 5,
+      "cells": [
+        {
+          "cell": "D5",
+          "value": "LWVD50A : Clave Digital "
+        }
+      ]
+    },
+    {
+      "row": 6,
+      "cells": [
+        {
+          "cell": "D6",
+          "value": "FSR008: Empresa - Cuenta BT"
+        }
+      ]
+    },
+    {
+      "row": 7,
+      "cells": [
+        {
+          "cell": "D7",
+          "value": "FSD008: "
+        },
+        {
+          "cell": "E7",
+          "value": "Pendiente validar"
+        }
+      ]
+    },
+    {
+      "row": 8,
+      "cells": [
+        {
+          "cell": "D8",
+          "value": "LCPD18: Cuenta BT Integradora"
+        }
+      ]
+    },
+    {
+      "row": 11,
+      "cells": [
+        {
+          "cell": "D11",
+          "value": "LINK TABLAS CORE"
+        }
+      ]
+    },
+    {
+      "row": 12,
+      "cells": [
+        {
+          "cell": "D12",
+          "value": "https://scotiabank-my.sharepoint.com/:x:/r/personal/said_sante_scotiabank_com_pe/_layouts/15/Doc.aspx?action=edit&sourcedoc=%7Be335c2b1-fc3b-49d0-9921-160542967fe4%7D&wdExp=TEAMS-TREATMENT&web=1&ovuser=8ff33436-4701-4dad-b7d3-3462e99c6889%2Crichard.braul_ex%40scotiabank.com.pe&clickparams=eyJBcHBOYW1lIjoiVGVhbXMtRGVza3RvcCIsIkFwcFZlcnNpb24iOiI0OS8yNjA4MTMxOTMxNyIsIkhhc0ZlZGVyYXRlZFVzZXIiOmZhbHNlfQ%3D%3D"
+        }
+      ]
+    },
+    {
+      "row": 15,
+      "cells": [
+        {
+          "cell": "D15",
+          "value": "TRANSCRIPCIÓN REUNIÓN MAPEO BCS 28 - ARQUITECTURA LUIS SOLIER"
+        }
+      ]
+    },
+    {
+      "row": 16,
+      "cells": [
+        {
+          "cell": "D16",
+          "value": "Recap: TAPP | Arquitectura PC 03 September | Meeting | Microsoft Teams"
+        }
+      ]
+    },
+    {
+      "row": 19,
+      "cells": [
+        {
+          "cell": "D19",
+          "value": "Notas de Junior - Pablo"
+        }
+      ]
+    },
+    {
+      "row": 20,
+      "cells": [
+        {
+          "cell": "D20",
+          "value": "- Manejamos 2 tipos de clientes: Físicos y Jurídicos."
+        }
+      ]
+    },
+    {
+      "row": 21,
+      "cells": [
+        {
+          "cell": "D21",
+          "value": "- La tabla FSD001 tiene el total de clientes. La tabla se dividió en FSD002 y FSD003 que tienen datos específicos del tipo de cliente."
+        }
+      ]
+    },
+    {
+      "row": 22,
+      "cells": [
+        {
+          "cell": "D22",
+          "value": " "
+        }
+      ]
+    },
+    {
+      "row": 23,
+      "cells": [
+        {
+          "cell": "D23",
+          "value": "- La tabla LWVD50A tiene emails y números de celular VERIFICADOS por el banco."
+        }
+      ]
+    },
+    {
+      "row": 24,
+      "cells": [
+        {
+          "cell": "D24",
+          "value": " "
+        }
+      ]
+    },
+    {
+      "row": 25,
+      "cells": [
+        {
+          "cell": "D25",
+          "value": "- Existen clientes que no están registrados en la tabla LWVD50A. Estos clientes no tendrán acceso a TAPP."
+        }
+      ]
+    },
+    {
+      "row": 26,
+      "cells": [
+        {
+          "cell": "D26",
+          "value": " "
+        }
+      ]
+    },
+    {
+      "row": 27,
+      "cells": [
+        {
+          "cell": "D27",
+          "value": "- La tabla LWVD50A tiene clientes que tienen registrado el número de celular y el email. Para Core banking en la comunicación siempre priorizan por uno de ellos."
+        }
+      ]
+    },
+    {
+      "row": 28,
+      "cells": [
+        {
+          "cell": "D28",
+          "value": " "
+        }
+      ]
+    },
+    {
+      "row": 29,
+      "cells": [
+        {
+          "cell": "D29",
+          "value": "- En la tabla LWVD50A el campo WV50ADCON registra el número de celular. Depende del dato seleccionado en WV50ATDAT (1:Email, 2:Celular)."
+        }
+      ]
+    },
+    {
+      "row": 32,
+      "cells": [
+        {
+          "cell": "D32",
+          "value": "Dudas"
+        }
+      ]
+    },
+    {
+      "row": 33,
+      "cells": [
+        {
+          "cell": "D33",
+          "value": "En la tabla LWVD50A se garantiza que siempre el cliente este registrado con el numero de celular ? - Busqueda de los flujos"
+        }
+      ]
+    },
+    {
+      "row": 39,
+      "cells": [
+        {
+          "cell": "D39",
+          "value": "Dudas Contrato"
+        }
+      ]
+    },
+    {
+      "row": 41,
+      "cells": [
+        {
+          "cell": "D41",
+          "value": "1. En caso el cliente WV50ADCON  tenga email address como se buscaria ya que los flujos solo envian celular"
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,69 @@
+<upi:ReqPay xmlns:upi="http://npci.org/upi/schema/">
+  <Head ver="2.0" ts="2027-01-15T10:30:45-05:00" orgId="000805" msgId="MSG20270115000000000000000000000001" prodType="UPI"/>
+  <Meta>
+    <Tag name="PAYREQSTART" value="2027-01-15T10:30:45-05:00"/>
+    <Tag name="PAYREQEND" value="2027-01-15T10:30:46-05:00"/>
+  </Meta>
+  <Txn id="TXN20270115000000000000000000000001" note="Transferencia CCE" custRef="000012345678" refId="REF202701150001" refUrl="https://api.example.test/transfers/REF202701150001" ts="2027-01-15T10:30:45-05:00" refCategory="00" type="PAY" purpose="00" initiationMode="00" subType="PAY"/>
+  <Payer addr="ana.perez@banco.test" name="ANA PEREZ" seqNum="1" type="PERSON" code="0000" cmId="CM001">
+    <Info>
+      <Identity id="DOC00012345" type="DNI" verifiedName="ANA PEREZ"/>
+      <Rating VerifiedAddress="TRUE"/>
+    </Info>
+    <Device>
+      <Tag name="MOBILE" value="51987654321"/>
+      <Tag name="GEOCODE" value="-12.0464,-77.0428"/>
+      <Tag name="LOCATION" value="LIMA"/>
+      <Tag name="IP" value="192.0.2.10"/>
+      <Tag name="TYPE" value="ANDROID"/>
+      <Tag name="ID" value="DEVICE-DEMO-0001"/>
+      <Tag name="OS" value="ANDROID14"/>
+      <Tag name="APP" value="TAPP"/>
+    </Device>
+    <Ac addrType="ACCOUNT">
+      <Detail name="IFSC" value="000805"/>
+      <Detail name="ACTYPE" value="SAVINGS"/>
+      <Detail name="ACNUM" value="00112233445566778899"/>
+    </Ac>
+    <Creds>
+      <Cred type="PIN" subType="MPIN">
+        <Data code="NPCI" ki="01">cTVmL211Uk5GMm9zT2w3ODVUTkZBVk1hVXcyVEhPQVp5ZzJzczlmeTVNb08rM3o4NldEL3dkUzFpUW1oZmlQQm4y</Data>
+      </Cred>
+    </Creds>
+    <Amount value="1250.50" curr="PEN"/>
+  </Payer>
+  <Payees>
+    <Payee addr="comercio.demo@banco.test" name="COMERCIO DEMO" seqNum="1" type="ENTITY" code="0001" cmId="CM100">
+      <Info>
+        <Identity id="RUC20123456789" type="RUC" verifiedName="COMERCIO DEMO SAC"/>
+        <Rating VerifiedAddress="TRUE"/>
+      </Info>
+      <Ac addrType="ACCOUNT">
+        <Detail name="IFSC" value="000123"/>
+        <Detail name="ACTYPE" value="CURRENT"/>
+        <Detail name="ACNUM" value="00998877665544332211"/>
+      </Ac>
+      <Amount value="1250.50" curr="PEN"/>
+    </Payee>
+  </Payees>
+  <ds:Signature xmlns:ds="http://www.w3.org/2000/09/xmldsig#">
+    <ds:SignedInfo>
+      <ds:CanonicalizationMethod Algorithm="http://www.w3.org/2001/10/xml-exc-c14n#"/>
+      <ds:SignatureMethod Algorithm="http://www.w3.org/2001/04/xmldsig-more#rsa-sha256"/>
+      <ds:Reference URI="">
+        <ds:Transforms>
+          <ds:Transform Algorithm="http://www.w3.org/2000/09/xmldsig#enveloped-signature"/>
+          <ds:Transform Algorithm="http://www.w3.org/2001/10/xml-exc-c14n#"/>
+        </ds:Transforms>
+        <ds:DigestMethod Algorithm="http://www.w3.org/2001/04/xmlenc#sha256"/>
+        <ds:DigestValue>RERERERERERERERERERERERERERERERERERERERERERE</ds:DigestValue>
+      </ds:Reference>
+    </ds:SignedInfo>
+    <ds:SignatureValue>SSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSS</ds:SignatureValue>
+    <ds:KeyInfo>
+      <ds:X509Data>
+        <ds:X509Certificate>CCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCC</ds:X509Certificate>
+      </ds:X509Data>
+    </ds:KeyInfo>
+  </ds:Signature>
+</upi:ReqPay>

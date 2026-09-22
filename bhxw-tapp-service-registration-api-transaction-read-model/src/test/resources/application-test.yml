@@ -1,0 +1,13 @@
+spring:
+  r2dbc:
+    url: r2dbc:postgresql://localhost:5432/tapp_transaction_read_model_test
+    username: tapp_projection
+    password: local_projection_password
+  kafka:
+    bootstrap-servers: localhost:9092
+
+app:
+  kafka:
+    consumer-group: transaction_projection_service_test
+    topics:
+      transaction-projection: tapp.transaction.projection.test.v1

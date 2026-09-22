@@ -1,0 +1,97 @@
+import com.github.spotbugs.snom.SpotBugsTask
+
+plugins {
+	id 'java'
+	id 'org.springframework.boot' version '4.0.6'
+	id 'io.spring.dependency-management' version '1.1.7'
+	id 'jacoco'
+	id 'pmd'
+	id 'checkstyle'
+	id 'com.diffplug.spotless' version '8.1.0'
+	id 'com.github.spotbugs' version '6.3.0'
+}
+
+group = 'pe.com.scotiabank.tapp.service.registration.api'
+version = '1.0.0'
+description = 'bhxw-tapp-service-registration-api'
+
+java {
+	toolchain {
+		languageVersion = JavaLanguageVersion.of(25)
+	}
+	sourceCompatibility = '25'
+}
+
+configurations {
+	compileOnly {
+		extendsFrom annotationProcessor
+	}
+	mockitoAgent
+}
+
+repositories {
+	if (project.hasProperty('artifactory_contextUrl')
+			&& project.hasProperty('artifactory_user')
+			&& project.hasProperty('artifactory_password')) {
+		maven {
+			url = uri("${artifactory_contextUrl}/ext-release-maven")
+			credentials {
+				username = "${artifactory_user}"
+				password = "${artifactory_password}"
+			}
+		}
+		maven {
+			url = uri("${artifactory_contextUrl}/ext-release-gradle-plugins")
+			credentials {
+				username = "${artifactory_user}"
+				password = "${artifactory_password}"
+			}
+		}
+	} else {
+		mavenCentral()
+	}
+}
+
+dependencies {
+	implementation 'org.springframework.boot:spring-boot-starter-actuator'
+	implementation 'org.springframework.boot:spring-boot-starter-webflux'
+	implementation 'org.springframework.boot:spring-boot-starter-validation'
+	implementation 'org.springframework.boot:spring-boot-starter-data-r2dbc'
+	implementation 'org.postgresql:r2dbc-postgresql'
+	implementation 'org.springframework.boot:spring-boot-starter-data-redis-reactive'
+	implementation 'org.springframework.boot:spring-boot-starter-kafka'
+
+	compileOnly 'org.projectlombok:lombok'
+	annotationProcessor 'org.projectlombok:lombok'
+
+	compileOnly 'com.github.spotbugs:spotbugs:4.9.8'
+	compileOnly 'com.github.stephenc.jcip:jcip-annotations:1.0-1'
+	compileOnly 'com.github.spotbugs:spotbugs-annotations:4.9.8'
+	compileOnly 'com.google.code.findbugs:jsr305:3.0.1'
+
+	testImplementation 'org.springframework.boot:spring-boot-starter-test'
+	testImplementation 'org.springframework.boot:spring-boot-starter-webflux-test'
+	testImplementation 'io.projectreactor:reactor-test'
+	testImplementation 'org.springframework.kafka:spring-kafka-test'
+	testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
+	testImplementation 'com.tngtech.archunit:archunit-junit5:1.4.1'
+	testImplementation 'org.mockito:mockito-core'
+	mockitoAgent('org.mockito:mockito-core') {
+		transitive = false
+	}
+}
+
+tasks.named('test') {
+	useJUnitPlatform()
+	jvmArgs += "-javaagent:${configurations.mockitoAgent.asPath}"
+}
+
+apply from: "$rootDir/gradle/static-analysis.gradle"
+apply from: "$rootDir/gradle/jacoco.gradle"
+
+tasks.withType(SpotBugsTask).configureEach {
+	reports {
+		xml.required.set(true)
+		html.required.set(true)
+	}
+}

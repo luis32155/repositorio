@@ -1,0 +1,128 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Customer seven-table full snapshot",
+  "type": "object",
+  "additionalProperties": true,
+  "required": ["payload", "metadata"],
+  "properties": {
+    "payload": {
+      "type": "object",
+      "additionalProperties": true,
+      "required": [
+        "snapshot_mode",
+        "customer_identity",
+        "individual_profile",
+        "legal_entity_profile",
+        "digital_contacts",
+        "account_profiles",
+        "customer_account_links",
+        "account_consolidations"
+      ],
+      "properties": {
+        "snapshot_mode": { "const": "FULL" },
+        "customer_identity": { "$ref": "#/$defs/identity" },
+        "individual_profile": {
+          "type": ["object", "null"],
+          "additionalProperties": true,
+          "properties": {
+            "birth_date": { "type": ["string", "null"], "format": "date" }
+          }
+        },
+        "legal_entity_profile": {
+          "type": ["object", "null"],
+          "additionalProperties": true,
+          "properties": {
+            "constitution_date": { "type": ["string", "null"], "format": "date" }
+          }
+        },
+        "digital_contacts": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": true,
+            "required": [
+              "country_code",
+              "document_type",
+              "document_number",
+              "contact_type",
+              "contact_value",
+              "validation_status"
+            ]
+          }
+        },
+        "account_profiles": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/account" }
+        },
+        "customer_account_links": {
+          "type": "array",
+          "items": {
+            "allOf": [
+              { "$ref": "#/$defs/account" },
+              { "$ref": "#/$defs/document" }
+            ]
+          }
+        },
+        "account_consolidations": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": true,
+            "required": [
+              "relationship_code",
+              "integrated_company_code",
+              "integrated_account_number",
+              "source_company_code",
+              "source_account_number"
+            ]
+          }
+        }
+      }
+    },
+    "metadata": {
+      "type": "object",
+      "additionalProperties": true,
+      "required": ["source_id", "event_id", "event_timestamp"],
+      "properties": {
+        "source_id": { "type": "string", "minLength": 1 },
+        "event_id": { "type": "string", "minLength": 1 },
+        "event_timestamp": { "type": "string", "format": "date-time" },
+        "source_sequence": {
+          "type": ["string", "integer"],
+          "pattern": "^[0-9]+$"
+        }
+      }
+    }
+  },
+  "$defs": {
+    "document": {
+      "type": "object",
+      "additionalProperties": true,
+      "required": ["country_code", "document_type", "document_number"],
+      "properties": {
+        "country_code": { "type": ["string", "integer"] },
+        "document_type": { "type": ["string", "integer"] },
+        "document_number": { "type": ["string", "integer"] }
+      }
+    },
+    "identity": {
+      "allOf": [
+        { "$ref": "#/$defs/document" },
+        {
+          "type": "object",
+          "additionalProperties": true,
+          "required": ["customer_type", "person_name"]
+        }
+      ]
+    },
+    "account": {
+      "type": "object",
+      "additionalProperties": true,
+      "required": ["company_code", "account_number"],
+      "properties": {
+        "company_code": { "type": ["string", "integer"] },
+        "account_number": { "type": ["string", "integer"] }
+      }
+    }
+  }
+}

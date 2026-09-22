@@ -1,0 +1,67 @@
+<RespListAccount>
+  <Head ver="2.0" ts="2027-01-15T10:30:46.521-05:00" orgId="000805" msgId="MSG20270115000000000000000000000001" prodType="UPI"/>
+  <Resp reqMsgId="MSG20270115000000000000000000000001" result="SUCCESS"/>
+  <Txn id="TXN20270115000000000000000000000001" note="Consulta de cuentas CCE" refId="REF20270115000000000001" refUrl="https://api.example.test/v1/accounts" ts="2027-01-15T10:30:46.521-05:00" type="ListAccount"/>
+  <AccountList>
+    <Account accType="SAVINGS" accRefNumber="117795514000001" maskedAccnumber="XXXXXXXXX000001"
+      ifsc="382" mmid="3000001" name="CLIENTE DEMO 001" aeba="N" mbeba="Y">
+      <CredsAllowed dLength="6" dType="Numeric" subType="SMS" type="OTP"/>
+      <CredsAllowed dLength="6" dType="Numeric" subType="MPIN" type="PIN"/>
+      <CredsAllowed dLength="6" dType="Numeric" subType="ATMPIN" type="PIN"/>
+    </Account>
+    <Account accType="SAVINGS" accRefNumber="117795514000002" maskedAccnumber="XXXXXXXXX000002"
+      ifsc="382" mmid="3000002" name="CLIENTE DEMO 002" aeba="N" mbeba="Y">
+      <CredsAllowed dLength="6" dType="Numeric" subType="SMS" type="OTP"/>
+      <CredsAllowed dLength="6" dType="Numeric" subType="MPIN" type="PIN"/>
+      <CredsAllowed dLength="6" dType="Numeric" subType="ATMPIN" type="PIN"/>
+    </Account>
+    <Account accType="SAVINGS" accRefNumber="117795514000003" maskedAccnumber="XXXXXXXXX000003"
+      ifsc="382" mmid="3000003" name="CLIENTE DEMO 003" aeba="N" mbeba="Y">
+      <CredsAllowed dLength="6" dType="Numeric" subType="SMS" type="OTP"/>
+      <CredsAllowed dLength="6" dType="Numeric" subType="MPIN" type="PIN"/>
+      <CredsAllowed dLength="6" dType="Numeric" subType="ATMPIN" type="PIN"/>
+    </Account>
+    <Account accType="SAVINGS" accRefNumber="117795514000004" maskedAccnumber="XXXXXXXXX000004"
+      ifsc="382" mmid="3000004" name="CLIENTE DEMO 004" aeba="N" mbeba="Y">
+      <CredsAllowed dLength="6" dType="Numeric" subType="SMS" type="OTP"/>
+      <CredsAllowed dLength="6" dType="Numeric" subType="MPIN" type="PIN"/>
+      <CredsAllowed dLength="6" dType="Numeric" subType="ATMPIN" type="PIN"/>
+    </Account>
+    <Account accType="SAVINGS" accRefNumber="117795514000005" maskedAccnumber="XXXXXXXXX000005"
+      ifsc="382" mmid="3000005" name="CLIENTE DEMO 005" aeba="N" mbeba="Y">
+      <CredsAllowed dLength="6" dType="Numeric" subType="SMS" type="OTP"/>
+      <CredsAllowed dLength="6" dType="Numeric" subType="MPIN" type="PIN"/>
+      <CredsAllowed dLength="6" dType="Numeric" subType="ATMPIN" type="PIN"/>
+    </Account>
+    <Account accType="SAVINGS" accRefNumber="117795514000006" maskedAccnumber="XXXXXXXXX000006"
+      ifsc="382" mmid="3000006" name="CLIENTE DEMO 006" aeba="N" mbeba="Y">
+      <CredsAllowed dLength="6" dType="Numeric" subType="SMS" type="OTP"/>
+      <CredsAllowed dLength="6" dType="Numeric" subType="MPIN" type="PIN"/>
+      <CredsAllowed dLength="6" dType="Numeric" subType="ATMPIN" type="PIN"/>
+    </Account>
+    <Account accType="SAVINGS" accRefNumber="117795514000007" maskedAccnumber="XXXXXXXXX000007"
+      ifsc="382" mmid="3000007" name="CLIENTE DEMO 007" aeba="N" mbeba="Y">
+      <CredsAllowed dLength="6" dType="Numeric" subType="SMS" type="OTP"/>
+      <CredsAllowed dLength="6" dType="Numeric" subType="MPIN" type="PIN"/>
+      <CredsAllowed dLength="6" dType="Numeric" subType="ATMPIN" type="PIN"/>
+    </Account>
+    <Account accType="SAVINGS" accRefNumber="117795514000008" maskedAccnumber="XXXXXXXXX000008"
+      ifsc="382" mmid="3000008" name="CLIENTE DEMO 008" aeba="N" mbeba="Y">
+      <CredsAllowed dLength="6" dType="Numeric" subType="SMS" type="OTP"/>
+      <CredsAllowed dLength="6" dType="Numeric" subType="MPIN" type="PIN"/>
+      <CredsAllowed dLength="6" dType="Numeric" subType="ATMPIN" type="PIN"/>
+    </Account>
+    <Account accType="SAVINGS" accRefNumber="117795514000009" maskedAccnumber="XXXXXXXXX000009"
+      ifsc="382" mmid="3000009" name="CLIENTE DEMO 009" aeba="N" mbeba="Y">
+      <CredsAllowed dLength="6" dType="Numeric" subType="SMS" type="OTP"/>
+      <CredsAllowed dLength="6" dType="Numeric" subType="MPIN" type="PIN"/>
+      <CredsAllowed dLength="6" dType="Numeric" subType="ATMPIN" type="PIN"/>
+    </Account>
+    <Account accType="SAVINGS" accRefNumber="117795514000010" maskedAccnumber="XXXXXXXXX000010"
+      ifsc="382" mmid="3000010" name="CLIENTE DEMO 010" aeba="N" mbeba="Y">
+      <CredsAllowed dLength="6" dType="Numeric" subType="SMS" type="OTP"/>
+      <CredsAllowed dLength="6" dType="Numeric" subType="MPIN" type="PIN"/>
+      <CredsAllowed dLength="6" dType="Numeric" subType="ATMPIN" type="PIN"/>
+    </Account>
+  </AccountList>
+</RespListAccount>

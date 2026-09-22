@@ -1,0 +1,7 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(cd \"C:\\\\Users\\\\Windows\\\\Downloads\\\\bhxw-tapp-service-registration-api-transaction-read-model\" && find . -type f -not -path '*/node_modules/*' -not -path '*/.git/*' | head -100)"
+    ]
+  }
+}

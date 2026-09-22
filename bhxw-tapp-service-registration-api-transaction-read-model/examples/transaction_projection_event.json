@@ -1,0 +1,28 @@
+{
+  "payload": {
+    "transaction_id": "TXN-001",
+    "req_msg_id": "ABC-001",
+    "event_type": "LogAuditDelivered",
+    "aggregate_version": 9,
+    "occurred_at": "2026-01-01T10:05:00Z",
+    "transaction_status": "COMPLETED",
+    "callback_status": "DELIVERED",
+    "notification_status": "DELIVERED",
+    "log_audit_status": "PERSISTED",
+    "amount": 100.0,
+    "currency": "PEN",
+    "masked_account": "****3456",
+    "started_at": "2026-01-01T10:00:00Z",
+    "completed_at": "2026-01-01T10:05:00Z",
+    "events": []
+  },
+  "metadata": {
+    "event_id": "EVT-000009",
+    "schema_version": "1.0",
+    "published_at": "2026-01-01T10:05:01Z",
+    "source_service": "outbox_publisher_service",
+    "correlation_id": "correlation-001",
+    "trace_id": "trace-001",
+    "retry_count": 0
+  }
+}

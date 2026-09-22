@@ -1,0 +1,719 @@
+{
+  "asyncapi": "3.1.0",
+  "info": {
+    "title": "TAPP Customer and Account CDC Events",
+    "version": "1.0.0-draft",
+    "description": "Contrato asíncrono para cargas iniciales y cambios incrementales de Customer y Account. Los eventos materializan los modelos de lectura en MongoDB."
+  },
+  "defaultContentType": "application/avro",
+  "servers": {
+    "event_bus": {
+      "host": "kafka.tapp.com:9092",
+      "protocol": "kafka",
+      "description": "Bootstrap server referencial; reemplazar por el host de cada ambiente."
+    }
+  },
+  "channels": {
+    "account_domain": {
+      "address": "tapp.account.domain.v1",
+      "description": "Eventos de carga inicial y CDC del dominio Account.",
+      "messages": {
+        "account_domain_event": {
+          "$ref": "#/components/messages/account_domain_event"
+        }
+      }
+    },
+    "account_domain_retry": {
+      "address": "tapp.account.domain.v1.retry",
+      "description": "Reintentos por errores transitorios del materializador de Account.",
+      "messages": {
+        "account_domain_retry_event": {
+          "$ref": "#/components/messages/account_domain_event"
+        }
+      }
+    },
+    "account_domain_dlq": {
+      "address": "tapp.account.domain.v1.dlq",
+      "description": "Eventos Account inválidos o con reintentos agotados.",
+      "messages": {
+        "account_domain_dead_letter": {
+          "$ref": "#/components/messages/account_domain_dead_letter"
+        }
+      }
+    },
+    "customer_domain": {
+      "address": "tapp.customer.domain.v1",
+      "description": "Eventos de carga inicial y CDC del dominio Customer.",
+      "messages": {
+        "customer_domain_event": {
+          "$ref": "#/components/messages/customer_domain_event"
+        }
+      }
+    },
+    "customer_domain_retry": {
+      "address": "tapp.customer.domain.v1.retry",
+      "description": "Reintentos por errores transitorios del materializador de Customer.",
+      "messages": {
+        "customer_domain_retry_event": {
+          "$ref": "#/components/messages/customer_domain_event"
+        }
+      }
+    },
+    "customer_domain_dlq": {
+      "address": "tapp.customer.domain.v1.dlq",
+      "description": "Eventos Customer inválidos o con reintentos agotados.",
+      "messages": {
+        "customer_domain_dead_letter": {
+          "$ref": "#/components/messages/customer_domain_dead_letter"
+        }
+      }
+    }
+  },
+  "operations": {
+    "publish_account_domain": {
+      "action": "send",
+      "summary": "CDC o Full Refresh publica un cambio de Account.",
+      "channel": {
+        "$ref": "#/channels/account_domain"
+      },
+      "messages": [
+        {
+          "$ref": "#/channels/account_domain/messages/account_domain_event"
+        }
+      ]
+    },
+    "consume_account_domain": {
+      "action": "receive",
+      "summary": "Account Materializer actualiza la colección Accounts de MongoDB.",
+      "description": "Debe controlar idempotencia por event_id y orden por source_version antes de confirmar el offset.",
+      "channel": {
+        "$ref": "#/channels/account_domain"
+      },
+      "messages": [
+        {
+          "$ref": "#/channels/account_domain/messages/account_domain_event"
+        }
+      ],
+      "bindings": {
+        "kafka": {
+          "groupId": {
+            "type": "string",
+            "const": "account_materializer_v1"
+          },
+          "bindingVersion": "0.5.0"
+        }
+      }
+    },
+    "publish_customer_domain": {
+      "action": "send",
+      "summary": "CDC o Full Refresh publica un cambio de Customer.",
+      "channel": {
+        "$ref": "#/channels/customer_domain"
+      },
+      "messages": [
+        {
+          "$ref": "#/channels/customer_domain/messages/customer_domain_event"
+        }
+      ]
+    },
+    "consume_customer_domain": {
+      "action": "receive",
+      "summary": "Customer Materializer actualiza la colección Customer de MongoDB.",
+      "description": "Debe controlar idempotencia por event_id y orden por source_version antes de confirmar el offset.",
+      "channel": {
+        "$ref": "#/channels/customer_domain"
+      },
+      "messages": [
+        {
+          "$ref": "#/channels/customer_domain/messages/customer_domain_event"
+        }
+      ],
+      "bindings": {
+        "kafka": {
+          "groupId": {
+            "type": "string",
+            "const": "customer_materializer_v1"
+          },
+          "bindingVersion": "0.5.0"
+        }
+      }
+    }
+  },
+  "components": {
+    "messages": {
+      "account_domain_event": {
+        "name": "account_domain_event",
+        "title": "Account Domain CDC Event",
+        "contentType": "application/avro",
+        "x-avro-schema": "./avro/account-domain-event.avsc",
+        "payload": {
+          "$ref": "#/components/schemas/account_domain_event"
+        },
+        "bindings": {
+          "kafka": {
+            "key": {
+              "type": "string",
+              "description": "account_id; garantiza orden por cuenta dentro de la partición.",
+              "pattern": "^[A-Za-z0-9._:-]+$",
+              "example": "ACC-100045"
+            },
+            "bindingVersion": "0.5.0"
+          }
+        },
+        "examples": [
+          {
+            "name": "account_snapshot",
+            "summary": "Registro emitido durante la carga inicial",
+            "payload": {
+              "payload": {
+                "operation": "SNAPSHOT",
+                "entity_id": "ACC-100045",
+                "source_version": 1,
+                "occurred_at": "2026-08-25T15:30:00Z",
+                "before": null,
+                "after": {
+                  "account_id": "ACC-100045",
+                  "customer_id": "CUS-100045",
+                  "masked_number": "******3456",
+                  "type": "SAVINGS",
+                  "currency": "PEN",
+                  "status": "ACTIVE",
+                  "product_code": "SAV-01"
+                }
+              },
+              "metadata": {
+                "event_id": "68c0aa14-efb2-4dc0-9603-8d274e716cbd",
+                "schema_version": "1.0",
+                "published_at": "2026-08-25T15:30:01Z",
+                "source_service": "ibm_data_replication",
+                "correlation_id": "80a71e5a-61c1-4f72-84f8-57d83f4d1672",
+                "retry_count": 0
+              }
+            }
+          }
+        ]
+      },
+      "customer_domain_event": {
+        "name": "customer_domain_event",
+        "title": "Customer Domain CDC Event",
+        "contentType": "application/avro",
+        "x-avro-schema": "./avro/customer-domain-event.avsc",
+        "payload": {
+          "$ref": "#/components/schemas/customer_domain_event"
+        },
+        "bindings": {
+          "kafka": {
+            "key": {
+              "type": "string",
+              "description": "customer_id; garantiza orden por cliente dentro de la partición.",
+              "pattern": "^[A-Za-z0-9._:-]+$",
+              "example": "CUS-100045"
+            },
+            "bindingVersion": "0.5.0"
+          }
+        },
+        "examples": [
+          {
+            "name": "customer_update",
+            "summary": "Actualización incremental de un cliente",
+            "payload": {
+              "payload": {
+                "operation": "UPDATE",
+                "entity_id": "CUS-100045",
+                "source_version": 18,
+                "occurred_at": "2026-08-25T15:30:00Z",
+                "before": null,
+                "after": {
+                  "customer_id": "CUS-100045",
+                  "document_type": "DNI",
+                  "masked_document": "******42",
+                  "given_names": "Ana María",
+                  "family_names": "Torres Ruiz",
+                  "status": "ACTIVE",
+                  "segment": "RETAIL"
+                }
+              },
+              "metadata": {
+                "event_id": "b9d51b84-27e0-4bca-8174-f1b8ed69a3ba",
+                "schema_version": "1.0",
+                "published_at": "2026-08-25T15:30:01Z",
+                "source_service": "ibm_data_replication",
+                "correlation_id": "80a71e5a-61c1-4f72-84f8-57d83f4d1672",
+                "retry_count": 0
+              }
+            }
+          }
+        ]
+      },
+      "account_domain_dead_letter": {
+        "name": "account_domain_dead_letter",
+        "title": "Account Domain Dead Letter Event",
+        "contentType": "application/avro",
+        "x-avro-schema": "./avro/account-domain-event.avsc",
+        "payload": {
+          "$ref": "#/components/schemas/account_dead_letter_event"
+        },
+        "bindings": {
+          "kafka": {
+            "key": {
+              "type": "string",
+              "pattern": "^[A-Za-z0-9._:-]+$"
+            },
+            "bindingVersion": "0.5.0"
+          }
+        }
+      },
+      "customer_domain_dead_letter": {
+        "name": "customer_domain_dead_letter",
+        "title": "Customer Domain Dead Letter Event",
+        "contentType": "application/avro",
+        "x-avro-schema": "./avro/customer-domain-event.avsc",
+        "payload": {
+          "$ref": "#/components/schemas/customer_dead_letter_event"
+        },
+        "bindings": {
+          "kafka": {
+            "key": {
+              "type": "string",
+              "pattern": "^[A-Za-z0-9._:-]+$"
+            },
+            "bindingVersion": "0.5.0"
+          }
+        }
+      }
+    },
+    "schemas": {
+      "account_domain_event": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "payload",
+          "metadata"
+        ],
+        "properties": {
+          "payload": {
+            "$ref": "#/components/schemas/account_change"
+          },
+          "metadata": {
+            "$ref": "#/components/schemas/event_metadata"
+          }
+        }
+      },
+      "customer_domain_event": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "payload",
+          "metadata"
+        ],
+        "properties": {
+          "payload": {
+            "$ref": "#/components/schemas/customer_change"
+          },
+          "metadata": {
+            "$ref": "#/components/schemas/event_metadata"
+          }
+        }
+      },
+      "account_change": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "operation",
+          "entity_id",
+          "source_version",
+          "occurred_at"
+        ],
+        "properties": {
+          "operation": {
+            "$ref": "#/components/schemas/change_operation"
+          },
+          "entity_id": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 64
+          },
+          "source_version": {
+            "type": "integer",
+            "format": "int64",
+            "minimum": 1
+          },
+          "occurred_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "before": {
+            "type": [
+              "object",
+              "null"
+            ],
+            "oneOf": [
+              {
+                "$ref": "#/components/schemas/account_record"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "after": {
+            "type": [
+              "object",
+              "null"
+            ],
+            "description": "Debe ser null únicamente cuando operation es DELETE.",
+            "oneOf": [
+              {
+                "$ref": "#/components/schemas/account_record"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          }
+        }
+      },
+      "customer_change": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "operation",
+          "entity_id",
+          "source_version",
+          "occurred_at"
+        ],
+        "properties": {
+          "operation": {
+            "$ref": "#/components/schemas/change_operation"
+          },
+          "entity_id": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 64
+          },
+          "source_version": {
+            "type": "integer",
+            "format": "int64",
+            "minimum": 1
+          },
+          "occurred_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "before": {
+            "type": [
+              "object",
+              "null"
+            ],
+            "oneOf": [
+              {
+                "$ref": "#/components/schemas/customer_record"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "after": {
+            "type": [
+              "object",
+              "null"
+            ],
+            "description": "Debe ser null únicamente cuando operation es DELETE.",
+            "oneOf": [
+              {
+                "$ref": "#/components/schemas/customer_record"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          }
+        }
+      },
+      "account_record": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "account_id",
+          "customer_id",
+          "masked_number",
+          "type",
+          "currency",
+          "status",
+          "product_code"
+        ],
+        "properties": {
+          "account_id": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 64
+          },
+          "customer_id": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 64
+          },
+          "masked_number": {
+            "type": "string",
+            "minLength": 4,
+            "maxLength": 32
+          },
+          "type": {
+            "type": "string",
+            "enum": [
+              "SAVINGS",
+              "CHECKING",
+              "SALARY",
+              "CREDIT",
+              "OTHER"
+            ]
+          },
+          "currency": {
+            "type": "string",
+            "pattern": "^[A-Z]{3}$"
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "ACTIVE",
+              "DORMANT",
+              "BLOCKED",
+              "CLOSED",
+              "UNKNOWN"
+            ]
+          },
+          "product_code": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 30
+          },
+          "branch_code": {
+            "type": "string",
+            "maxLength": 20
+          },
+          "alias": {
+            "type": "string",
+            "maxLength": 80
+          },
+          "opened_at": {
+            "type": "string",
+            "format": "date"
+          }
+        }
+      },
+      "customer_record": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "customer_id",
+          "document_type",
+          "masked_document",
+          "given_names",
+          "family_names",
+          "status"
+        ],
+        "properties": {
+          "customer_id": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 64
+          },
+          "document_type": {
+            "type": "string",
+            "enum": [
+              "DNI",
+              "CE",
+              "PASSPORT",
+              "RUC",
+              "OTHER"
+            ]
+          },
+          "masked_document": {
+            "type": "string",
+            "minLength": 4,
+            "maxLength": 32
+          },
+          "given_names": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 120
+          },
+          "family_names": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 160
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "ACTIVE",
+              "INACTIVE",
+              "BLOCKED",
+              "DECEASED",
+              "UNKNOWN"
+            ]
+          },
+          "segment": {
+            "type": "string",
+            "maxLength": 50
+          },
+          "masked_email": {
+            "type": "string",
+            "maxLength": 254
+          },
+          "masked_mobile": {
+            "type": "string",
+            "maxLength": 32
+          }
+        }
+      },
+      "change_operation": {
+        "type": "string",
+        "enum": [
+          "SNAPSHOT",
+          "CREATE",
+          "UPDATE",
+          "DELETE"
+        ]
+      },
+      "event_metadata": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "event_id",
+          "schema_version",
+          "published_at",
+          "source_service",
+          "correlation_id",
+          "retry_count"
+        ],
+        "properties": {
+          "event_id": {
+            "type": "string",
+            "format": "uuid",
+            "description": "Identificador global utilizado para idempotencia."
+          },
+          "schema_version": {
+            "type": "string",
+            "pattern": "^\\d+\\.\\d+$"
+          },
+          "published_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "source_service": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 100
+          },
+          "correlation_id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "trace_id": {
+            "type": "string",
+            "maxLength": 100
+          },
+          "retry_count": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 3,
+            "default": 0
+          }
+        }
+      },
+      "account_dead_letter_event": {
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/account_domain_event"
+          },
+          {
+            "type": "object",
+            "required": [
+              "dead_letter"
+            ],
+            "properties": {
+              "dead_letter": {
+                "$ref": "#/components/schemas/dead_letter_metadata"
+              }
+            }
+          }
+        ]
+      },
+      "customer_dead_letter_event": {
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/customer_domain_event"
+          },
+          {
+            "type": "object",
+            "required": [
+              "dead_letter"
+            ],
+            "properties": {
+              "dead_letter": {
+                "$ref": "#/components/schemas/dead_letter_metadata"
+              }
+            }
+          }
+        ]
+      },
+      "dead_letter_metadata": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "error_code",
+          "error_type",
+          "error_message",
+          "failed_at",
+          "original_topic",
+          "original_partition",
+          "original_offset"
+        ],
+        "properties": {
+          "error_code": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 80
+          },
+          "error_type": {
+            "type": "string",
+            "enum": [
+              "NON_RETRYABLE",
+              "RETRYABLE_EXHAUSTED"
+            ]
+          },
+          "error_message": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 1000
+          },
+          "failed_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "original_topic": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 249
+          },
+          "original_partition": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "original_offset": {
+            "type": "integer",
+            "format": "int64",
+            "minimum": 0
+          },
+          "consumer_group": {
+            "type": "string",
+            "maxLength": 255
+          }
+        }
+      }
+    }
+  },
+  "id": "urn:bns:tapp:customer-account-cdc"
+}

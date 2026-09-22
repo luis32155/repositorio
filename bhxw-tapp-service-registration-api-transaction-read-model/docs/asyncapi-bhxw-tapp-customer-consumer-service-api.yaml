@@ -1,0 +1,43 @@
+asyncapi: 3.1.0
+id: urn:bhxw:tapp:customer-consumer-service-api
+info:
+  title: BHXW Customer Information Consumer
+  version: 2.0.0
+  description: >
+    Full user snapshots in a dynamic payload. The consumer preserves all payload
+    and metadata fields as JSONB and projects known fields into four PostgreSQL
+    tables. This contract replaces the former AS400 personType/person model.
+defaultContentType: application/json
+channels:
+  customerInformation:
+    address: bhxw.tapp.customer.cdc.v1
+    description: >
+      Single configurable topic. Recommended Kafka key is enterprise_sco_id|user_id;
+      the producer's actual key is pending confirmation and is not enforced.
+    messages:
+      customerSnapshot:
+        $ref: '#/components/messages/customerSnapshot'
+operations:
+  consumeCustomerSnapshot:
+    action: receive
+    channel:
+      $ref: '#/channels/customerInformation'
+    messages:
+      - $ref: '#/channels/customerInformation/messages/customerSnapshot'
+components:
+  messages:
+    customerSnapshot:
+      name: customerSnapshot
+      title: Customer information full snapshot
+      contentType: application/json
+      payload:
+        schemaFormat: application/schema+json;version=draft-2020-12
+        schema:
+          $ref: '../bhxw-customer-event-consumer/docs/customer-information.schema.json'
+      description: >
+        event_id describes the event and is not unique. Ordering currently uses
+        user_details.event_timestamp or metadata.event_timestamp as fallback.
+        Equal timestamps with different payloads are rejected. Services and accounts
+        are complete snapshots; arrays may be empty but must not be omitted.
+        Unknown fields at any payload depth are retained.
+
