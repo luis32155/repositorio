@@ -80,7 +80,7 @@ Si falla una tabla, PostgreSQL revierte las siete operaciones.
 | `KAFKA_TOPIC_CUSTOMER_EVENTS` | `bhxw.tapp.customer.cdc.v1` |
 | `KAFKA_CONSUMER_GROUP` | `customer_event_consumer_v1` |
 | `KAFKA_CONCURRENCY` | `1` para un pod y procesamiento ordenado |
-| `DB_INIT_MODE` | `never`; usar `always` solo para inicialización local |
+| `DB_INIT_MODE` | `always`; usar `never` cuando el esquema sea gestionado externamente |
 
 Los virtual threads de Spring permanecen habilitados. Reactor y R2DBC continúan
 ejecutando el camino principal de forma no bloqueante.

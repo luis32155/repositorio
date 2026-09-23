@@ -19,7 +19,7 @@ spring:
       max-acquire-time: 10s
   sql:
     init:
-      mode: ${DB_INIT_MODE:never}
+      mode: ${DB_INIT_MODE:always}
   kafka:
     bootstrap-servers: ${KAFKA_BOOTSTRAP_SERVERS:localhost:9092}
     consumer:
